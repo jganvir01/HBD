@@ -9,21 +9,55 @@
 body {
   margin:0;
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg,#fff5f7,#f3e5f5,#ede7f6);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
   overflow:hidden;
 }
 
+/* 🌌 animated gradient background */
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(270deg,#ffdde1,#ee9ca7,#c3cfe2,#a1c4fd);
+  background-size:600% 600%;
+  animation: gradientMove 15s ease infinite;
+  z-index:-2;
+}
+
+@keyframes gradientMove {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* ✨ floating particles */
+.particle {
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  opacity:0.7;
+  animation: floatUp 8s linear infinite;
+}
+
+@keyframes floatUp {
+  from { transform:translateY(100vh); opacity:0; }
+  20%{opacity:1;}
+  to { transform:translateY(-10vh); opacity:0; }
+}
+
+/* card */
 .card {
+  position:relative;
   background:white;
   padding:30px;
   border-radius:20px;
   width:520px;
   text-align:center;
-  box-shadow:0 20px 50px rgba(0,0,0,0.15);
+  box-shadow:0 20px 50px rgba(0,0,0,0.2);
+  margin:auto;
+  top:50%;
+  transform:translateY(-50%);
   z-index:2;
 }
 
@@ -65,13 +99,14 @@ button {
   transform: translateY(0);
 }
 
-/* Pokémon floating */
+/* Pokémon */
 .pokemon {
   position:absolute;
   font-size:3rem;
   opacity:0.8;
   animation: float 6s ease-in-out infinite;
 }
+
 @keyframes float {
   0%,100% { transform:translateY(0); }
   50% { transform:translateY(-30px); }
@@ -91,6 +126,7 @@ button {
 
 <body>
 
+<div id="particles"></div>
 <div id="pokemonContainer"></div>
 
 <div class="card" id="card">
@@ -107,53 +143,48 @@ button {
 <div class="activity" id="activity"></div>
 </div>
 
-<!-- SOUND -->
 <audio id="wrongSound" src="fah.mp3"></audio>
 
 <script>
-const pokemons = ["⚡","🔥","🌊","🌿","✨","💫","🌈","❄️","🌟"];
+// 🌌 particles
+function createParticles(){
+  for(let i=0;i<40;i++){
+    let p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"vw";
+    p.style.animationDuration=(5+Math.random()*5)+"s";
+    document.body.appendChild(p);
+  }
+}
+createParticles();
 
-const data = [
-{q:"SI unit of electric charge?", a:"coulomb",
-act:"Cake 🎂 — A quiet flame trembles… a wish waits."},
+// Pokémon
+const pokemons=["⚡","🔥","🌊","🌿","✨","💫","🌈","❄️","🌟"];
 
-{q:"Unit of bond dissociation enthalpy?", a:"kjmol",
-act:"Gifts 🎁 — A surprise finds its way to you."},
-
-{q:"Electron configuration of Argon?", a:"1s2 2s2 2p6 3s2 3p6",
-act:"Shopping 🛍️ — The city glows with possibilities."},
-
-{q:"pH of 0.01 M HCl?", a:"2",
-act:"Shoes 👠 — Every step feels written."},
-
-{q:"Ksp of Ag2SO4?", a:"[Ag+]^2[SO4^2-]",
-act:"Ice Skating ⛸️ — You glide through frozen light."},
-
-{q:"Number of radial nodes in 3p orbital?", a:"1",
-act:"Crossword 🧩 — Clues begin to align."},
-
-{q:"Geometrical isomers of but-2-ene?", a:"2",
-act:"Bowling 🎳 — Laughter echoes down lanes."},
-
-{q:"ΔG at equilibrium?", a:"0",
-act:"Dinner 🍽️ — The night slows and softens."},
-
-{q:"Coordination number of Co in complex?", a:"6",
-act:"Makeout 😏 — The world fades… just this moment."}
+const data=[
+{q:"SI unit of electric charge?",a:"coulomb",act:"Cake 🎂 — A quiet flame trembles…"},
+{q:"Unit of bond dissociation enthalpy?",a:"kjmol",act:"Gifts 🎁 — A surprise finds you…"},
+{q:"Electron configuration of Argon?",a:"1s2 2s2 2p6 3s2 3p6",act:"Shopping 🛍️ — The city glows…"},
+{q:"pH of 0.01 M HCl?",a:"2",act:"Shoes 👠 — Every step feels written."},
+{q:"Ksp of Ag2SO4?",a:"[Ag+]^2[SO4^2-]",act:"Ice Skating ⛸️ — You glide freely."},
+{q:"Radial nodes in 3p?",a:"1",act:"Crossword 🧩 — Clues align."},
+{q:"Geometrical isomers of but-2-ene?",a:"2",act:"Bowling 🎳 — Laughter echoes."},
+{q:"ΔG at equilibrium?",a:"0",act:"Dinner 🍽️ — The night softens."},
+{q:"Coordination number of Co?",a:"6",act:"Makeout 😏 — The world fades."}
 ];
 
 let i=0;
 
-function spawnPokemon() {
-  const container = document.getElementById("pokemonContainer");
-  container.innerHTML = "";
+function spawnPokemon(){
+  let c=document.getElementById("pokemonContainer");
+  c.innerHTML="";
   for(let j=0;j<6;j++){
-    let p = document.createElement("div");
+    let p=document.createElement("div");
     p.className="pokemon";
-    p.innerText = pokemons[i];
-    p.style.left = Math.random()*90 + "vw";
-    p.style.top = Math.random()*80 + "vh";
-    container.appendChild(p);
+    p.innerText=pokemons[i];
+    p.style.left=Math.random()*90+"vw";
+    p.style.top=Math.random()*80+"vh";
+    c.appendChild(p);
   }
 }
 
@@ -186,9 +217,9 @@ function check(){
   } else {
     document.getElementById("status").innerText="Wrong 😭";
 
-    let sound=document.getElementById("wrongSound");
-    sound.currentTime=0;
-    sound.play();
+    let s=document.getElementById("wrongSound");
+    s.currentTime=0;
+    s.play();
 
     let card=document.getElementById("card");
     card.classList.add("shake");
