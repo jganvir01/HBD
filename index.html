@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAPPY BIRTHDAY POOKIE</title>
+
+<style>
+body {
+  margin:0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg,#fff5f7,#f3e5f5,#ede7f6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+}
+
+.card {
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  width:520px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,0.15);
+  z-index:2;
+}
+
+h1 {
+  font-size:2rem;
+  background: linear-gradient(135deg,#ff6b9d,#c44bff,#6bcaff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+input {
+  padding:12px;
+  width:70%;
+  border-radius:10px;
+  border:2px solid #ff6b9d;
+}
+
+button {
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.submit { background:#ff6b9d; color:white; }
+.next { display:none; margin-top:10px; background:orange; }
+
+.status { margin-top:10px; font-weight:bold; }
+
+.activity {
+  margin-top:15px;
+  opacity:0;
+  transform: translateY(20px);
+  transition:0.7s;
+  font-style:italic;
+}
+.activity.show {
+  opacity:1;
+  transform: translateY(0);
+}
+
+/* Pokémon floating */
+.pokemon {
+  position:absolute;
+  font-size:3rem;
+  opacity:0.8;
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-30px); }
+}
+
+/* shake */
+.shake { animation:shake 0.3s; }
+@keyframes shake {
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  50%{transform:translateX(8px)}
+  75%{transform:translateX(-5px)}
+  100%{transform:translateX(0)}
+}
+</style>
+</head>
+
+<body>
+
+<div id="pokemonContainer"></div>
+
+<div class="card" id="card">
+<h1>HAPPY BIRTHDAY POOKIE 🎂</h1>
+
+<div id="q"></div>
+
+<input id="ans" placeholder="Type answer...">
+<button class="submit" onclick="check()">Submit</button>
+
+<div class="status" id="status"></div>
+<button class="next" id="nextBtn" onclick="next()">Next ➜</button>
+
+<div class="activity" id="activity"></div>
+</div>
+
+<!-- SOUND -->
+<audio id="wrongSound" src="fah.mp3"></audio>
+
+<script>
+const pokemons = ["⚡","🔥","🌊","🌿","✨","💫","🌈","❄️","🌟"];
+
+const data = [
+{q:"SI unit of electric charge?", a:"coulomb",
+act:"Cake 🎂 — A quiet flame trembles… a wish waits."},
+
+{q:"Unit of bond dissociation enthalpy?", a:"kjmol",
+act:"Gifts 🎁 — A surprise finds its way to you."},
+
+{q:"Electron configuration of Argon?", a:"1s2 2s2 2p6 3s2 3p6",
+act:"Shopping 🛍️ — The city glows with possibilities."},
+
+{q:"pH of 0.01 M HCl?", a:"2",
+act:"Shoes 👠 — Every step feels written."},
+
+{q:"Ksp of Ag2SO4?", a:"[Ag+]^2[SO4^2-]",
+act:"Ice Skating ⛸️ — You glide through frozen light."},
+
+{q:"Number of radial nodes in 3p orbital?", a:"1",
+act:"Crossword 🧩 — Clues begin to align."},
+
+{q:"Geometrical isomers of but-2-ene?", a:"2",
+act:"Bowling 🎳 — Laughter echoes down lanes."},
+
+{q:"ΔG at equilibrium?", a:"0",
+act:"Dinner 🍽️ — The night slows and softens."},
+
+{q:"Coordination number of Co in complex?", a:"6",
+act:"Makeout 😏 — The world fades… just this moment."}
+];
+
+let i=0;
+
+function spawnPokemon() {
+  const container = document.getElementById("pokemonContainer");
+  container.innerHTML = "";
+  for(let j=0;j<6;j++){
+    let p = document.createElement("div");
+    p.className="pokemon";
+    p.innerText = pokemons[i];
+    p.style.left = Math.random()*90 + "vw";
+    p.style.top = Math.random()*80 + "vh";
+    container.appendChild(p);
+  }
+}
+
+function load(){
+  document.getElementById("q").innerText="Q"+(i+1)+": "+data[i].q;
+  document.getElementById("ans").value="";
+  document.getElementById("status").innerText="";
+  document.getElementById("activity").classList.remove("show");
+  document.getElementById("nextBtn").style.display="none";
+  spawnPokemon();
+}
+load();
+
+function norm(s){
+  return s.toLowerCase().replace(/\s+/g,'');
+}
+
+function check(){
+  let user=norm(document.getElementById("ans").value);
+  let correct=norm(data[i].a);
+
+  if(user===correct){
+    document.getElementById("status").innerText="Correct 🎉";
+    document.getElementById("nextBtn").style.display="block";
+
+    let act=document.getElementById("activity");
+    act.innerText="✨ "+data[i].act;
+    setTimeout(()=>act.classList.add("show"),100);
+
+  } else {
+    document.getElementById("status").innerText="Wrong 😭";
+
+    let sound=document.getElementById("wrongSound");
+    sound.currentTime=0;
+    sound.play();
+
+    let card=document.getElementById("card");
+    card.classList.add("shake");
+    setTimeout(()=>card.classList.remove("shake"),300);
+  }
+}
+
+function next(){
+  i++;
+  if(i>=data.length){
+    document.getElementById("q").innerText="You unlocked everything ✨";
+    document.getElementById("ans").style.display="none";
+    document.querySelector(".submit").style.display="none";
+    document.getElementById("nextBtn").style.display="none";
+    document.getElementById("activity").innerText="Now go live it 💫";
+    document.getElementById("activity").classList.add("show");
+    return;
+  }
+  load();
+}
+</script>
+
+</body>
+</html>
