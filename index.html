@@ -8,28 +8,31 @@
 <style>
 body {
   margin:0;
-  font-family: "Segoe UI", sans-serif;
+  font-family:"Segoe UI",sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
   overflow:hidden;
 }
 
-/* 🌌 animated gradient background */
+/* 🌌 animated gradient */
 body::before {
   content:"";
   position:fixed;
   inset:0;
   background: linear-gradient(270deg,#ffdde1,#ee9ca7,#c3cfe2,#a1c4fd);
   background-size:600% 600%;
-  animation: gradientMove 15s ease infinite;
+  animation: bgMove 15s ease infinite;
   z-index:-2;
 }
-
-@keyframes gradientMove {
+@keyframes bgMove {
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
 
-/* ✨ floating particles */
+/* ✨ particles */
 .particle {
   position:absolute;
   width:6px;
@@ -37,30 +40,26 @@ body::before {
   background:white;
   border-radius:50%;
   opacity:0.7;
-  animation: floatUp 8s linear infinite;
+  animation: floatUp linear infinite;
 }
-
 @keyframes floatUp {
-  from { transform:translateY(100vh); opacity:0; }
+  from {transform:translateY(100vh); opacity:0;}
   20%{opacity:1;}
-  to { transform:translateY(-10vh); opacity:0; }
+  to {transform:translateY(-10vh); opacity:0;}
 }
 
-/* card */
+/* 🎯 centered card */
 .card {
-  position:relative;
   background:white;
   padding:30px;
   border-radius:20px;
   width:520px;
   text-align:center;
   box-shadow:0 20px 50px rgba(0,0,0,0.2);
-  margin:auto;
-  top:50%;
-  transform:translateY(-50%);
   z-index:2;
 }
 
+/* title */
 h1 {
   font-size:2rem;
   background: linear-gradient(135deg,#ff6b9d,#c44bff,#6bcaff);
@@ -68,6 +67,14 @@ h1 {
   -webkit-text-fill-color:transparent;
 }
 
+/* question */
+#q {
+  margin:20px 0;
+  font-size:1.2rem;
+  font-weight:600;
+}
+
+/* input */
 input {
   padding:12px;
   width:70%;
@@ -75,28 +82,30 @@ input {
   border:2px solid #ff6b9d;
 }
 
+/* buttons */
 button {
   padding:12px;
   border:none;
   border-radius:10px;
   cursor:pointer;
 }
-
 .submit { background:#ff6b9d; color:white; }
 .next { display:none; margin-top:10px; background:orange; }
 
+/* status */
 .status { margin-top:10px; font-weight:bold; }
 
+/* activity */
 .activity {
   margin-top:15px;
   opacity:0;
-  transform: translateY(20px);
+  transform:translateY(20px);
   transition:0.7s;
   font-style:italic;
 }
 .activity.show {
   opacity:1;
-  transform: translateY(0);
+  transform:translateY(0);
 }
 
 /* Pokémon */
@@ -106,10 +115,9 @@ button {
   opacity:0.8;
   animation: float 6s ease-in-out infinite;
 }
-
 @keyframes float {
-  0%,100% { transform:translateY(0); }
-  50% { transform:translateY(-30px); }
+  0%,100% {transform:translateY(0);}
+  50% {transform:translateY(-30px);}
 }
 
 /* shake */
@@ -126,7 +134,6 @@ button {
 
 <body>
 
-<div id="particles"></div>
 <div id="pokemonContainer"></div>
 
 <div class="card" id="card">
@@ -147,20 +154,18 @@ button {
 
 <script>
 // 🌌 particles
-function createParticles(){
-  for(let i=0;i<40;i++){
-    let p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"vw";
-    p.style.animationDuration=(5+Math.random()*5)+"s";
-    document.body.appendChild(p);
-  }
+for(let i=0;i<40;i++){
+  let p=document.createElement("div");
+  p.className="particle";
+  p.style.left=Math.random()*100+"vw";
+  p.style.animationDuration=(5+Math.random()*5)+"s";
+  document.body.appendChild(p);
 }
-createParticles();
 
-// Pokémon
+// Pokémon icons
 const pokemons=["⚡","🔥","🌊","🌿","✨","💫","🌈","❄️","🌟"];
 
+// questions
 const data=[
 {q:"SI unit of electric charge?",a:"coulomb",act:"Cake 🎂 — A quiet flame trembles…"},
 {q:"Unit of bond dissociation enthalpy?",a:"kjmol",act:"Gifts 🎁 — A surprise finds you…"},
